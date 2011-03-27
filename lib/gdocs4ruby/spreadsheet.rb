@@ -19,7 +19,7 @@ module GDocs4Ruby
   #The Spreadsheet class represents a Google Spreadsheet.  Also check out Document and BaseObject, the superclass of Spreadsheet.
   #=Usage
   #All usages assume you've already authenticated with the service, and have a service object called
-  #@service.  
+  #@service.
   #1. Create a new Spreadsheet
   #    s = Spreadsheet.new(@service)
   #    s.title = 'Test Spreadsheet'
@@ -46,7 +46,7 @@ module GDocs4Ruby
   #6. Retrieving an Export
   #    s = Spreadsheet.find(@service, {:id => @doc_id})
   #    s.download_to_file('pdf', '/path/to/save/location.pdf')
-  
+
   class Spreadsheet < Document
     DOCUMENT_XML = '<?xml version="1.0" encoding="UTF-8"?>
 <atom:entry xmlns:atom="http://www.w3.org/2005/Atom">
@@ -56,28 +56,27 @@ module GDocs4Ruby
 </atom:entry>'
     DOWNLOAD_TYPES = ['xls', 'csv', 'pdf', 'ods', 'tsv', 'html']
     EXPORT_URI = 'http://spreadsheets.google.com/feeds/download/spreadsheets/Export'
-    
-    #Helper function limit queries to Spreadsheets.  See BaseObject::find for syntax.  Type is not required and assumed to be 'spreadsheet'.
+
+    # Helper function limit queries to Spreadsheets.  See BaseObject::find for syntax.  Type is not required and assumed to be 'spreadsheet'.
     def self.find(service, query, args = {})
       BaseObject::find(service, query, 'spreadsheet', args)
     end
-    
-    #Creates a new Spreadsheet instance.  Requires a valid Service object.
+
+    # Creates a new Spreadsheet instance.  Requires a valid Service object.
     def initialize(service, attributes = {})
       super(service, attributes)
-      @xml = DOCUMENT_XML
+      @xml = DOCUMENT_XML.dup
     end
-    
-    #Retrieves an export of the Spreadsheet.  The parameter +type+ must be one of the DOWNLOAD_TYPES.
-    def get_content(type)
-      if !@exists
-        raise DocumentDoesntExist
-      end
-      if not DOWNLOAD_TYPES.include? type
-        raise ArgumentError
+
+    # Retrieves an export of the Spreadsheet.  The parameter +type+ must be one of the DOWNLOAD_TYPES.
+    def get_content(type, options = {})
+      raise DocumentDoesntExist if !@exists
+      if !DOWNLOAD_TYPES.include?(type)
+        raise(ArgumentError, "type #{type} is not a valid download type. Must be one of #{DOWNLOAD_TYPES.join(', ')}"
       end
       service.reauthenticate('wise')
-      ret = service.send_request(GData4Ruby::Request.new(:get, EXPORT_URI, nil, nil, {"key" => @id.gsub(/\w.*:/, ""),"exportFormat" => type}))
+      options = {"key" => @id.gsub(/\w.*:/, ""), "exportFormat" => type}.merge(options)
+      ret = service.send_request(GData4Ruby::Request.new(:get, EXPORT_URI, nil, nil, options)
       service.reauthenticate()
       ret.body
     end
