@@ -72,7 +72,7 @@ module GDocs4Ruby
     def get_content(type, options = {})
       raise DocumentDoesntExist if !@exists
       if !DOWNLOAD_TYPES.include?(type)
-        raise(ArgumentError, "type #{type} is not a valid download type. Must be one of #{DOWNLOAD_TYPES.join(', ')}"
+        raise(ArgumentError, "type #{type} is not a valid download type. Must be one of #{DOWNLOAD_TYPES.join(', ')}")
       end
       service.reauthenticate('wise')
       options = {"key" => @id.gsub(/\w.*:/, ""), "exportFormat" => type}.merge(options)
