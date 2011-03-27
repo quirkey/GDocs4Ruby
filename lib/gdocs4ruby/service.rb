@@ -15,7 +15,6 @@
 # Feel free to use and update, but be sure to contribute your
 # code back to the project and attribute as required by the license.
 #++
-require 'gdocs4ruby/base'
 require 'gdocs4ruby/base_object'
 require 'gdocs4ruby/folder'
 require 'gdocs4ruby/document'
