@@ -76,7 +76,7 @@ module GDocs4Ruby
       end
       service.reauthenticate('wise')
       options = {"key" => @id.gsub(/\w.*:/, ""), "exportFormat" => type}.merge(options)
-      ret = service.send_request(GData4Ruby::Request.new(:get, EXPORT_URI, nil, nil, options)
+      ret = service.send_request(GData4Ruby::Request.new(:get, EXPORT_URI, nil, nil, options))
       service.reauthenticate()
       ret.body
     end
