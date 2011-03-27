@@ -15,7 +15,7 @@
 # Feel free to use and update, but be sure to contribute your
 # code back to the project and attribute as required by the license.
 #++
-require 'gdocs4ruby/base' 
+require 'gdocs4ruby/base'
 require 'gdocs4ruby/base_object'
 require 'gdocs4ruby/folder'
 require 'gdocs4ruby/document'
@@ -27,7 +27,7 @@ module GDocs4Ruby
 DOCUMENT_LIST_FEED = "https://docs.google.com/feeds/documents/private/full"
 FOLDER_LIST_FEED = "http://docs.google.com/feeds/documents/private/full/-/folder?showfolders=true"
 
-  #The service class is the main handler for all direct interactions with the 
+  #The service class is the main handler for all direct interactions with the
   #Google Documents API.  A service represents a single user account.  Each user
   #account can have multiple documents and folders.
   #=Usage
@@ -42,24 +42,30 @@ FOLDER_LIST_FEED = "http://docs.google.com/feeds/documents/private/full/-/folder
   #3. Get Folder List
   #    folders = serivce.folders
   #
-  class Service < GData4Ruby::Service    
+  class Service < GData4Ruby::Service
     #Accepts an optional attributes hash for initialization values
     def initialize(attributes = {})
       super(attributes)
     end
-  
-    # The authenticate method passes the username and password to google servers.  
+
+    # The authenticate method passes the username and password to google servers.
     # If authentication succeeds, returns true, otherwise raises the AuthenticationFailed error.
     def authenticate(username, password, service='writely')
       super(username, password, service)
     end
-    
+
     #Helper function to reauthenticate to a new Google service without having to re-set credentials.
     def reauthenticate(service='writely')
       authenticate(@account, @password, service)
     end
-    
-    #Returns an array of Folder objects for each folder associated with 
+
+    # Load a document object by id
+    def document(id)
+      GDocs4Ruby::Document.find(self, {:id => id})
+    end
+    alias :doc :document
+
+    #Returns an array of Folder objects for each folder associated with
     #the authenticated account.
     def folders
       if not @auth_token
@@ -76,8 +82,8 @@ FOLDER_LIST_FEED = "http://docs.google.com/feeds/documents/private/full/-/folder
       end
       return folders
     end
-    
-    #Returns an array of objects for each document in the account.  Note that this 
+
+    #Returns an array of objects for each document in the account.  Note that this
     #method will return all documents for the account, including documents contained in
     #subfolders.
     def files
