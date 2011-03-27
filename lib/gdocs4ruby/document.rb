@@ -19,7 +19,7 @@ module GDocs4Ruby
   #The Document class represents a Google Word Document.  Also check out BaseObject, the superclass of Document.
   #=Usage
   #All usages assume you've already authenticated with the service, and have a service object called
-  #@service.  
+  #@service.
   #1. Create a new Document
   #    doc = Document.new(@service)
   #    doc.title = 'Test Document'
@@ -53,7 +53,7 @@ module GDocs4Ruby
   #7. Retrieving an Export
   #    doc = Document.find(@service, {:id => @doc_id})
   #    doc.download_to_file('pdf', '/path/to/save/location.pdf')
-  
+
   class Document < BaseObject
     DOCUMENT_XML = '<?xml version="1.0" encoding="UTF-8"?>
 <atom:entry xmlns:atom="http://www.w3.org/2005/Atom">
@@ -63,13 +63,13 @@ module GDocs4Ruby
 </atom:entry>'
     DOWNLOAD_TYPES = ['doc', 'html', 'odt', 'pdf', 'png', 'rtf', 'txt', 'zip']
     EXPORT_URI = 'https://docs.google.com/feeds/download/documents/Export'
-    
+
     #Creates a new Document instance.  Requires a valid Service object.
     def initialize(service, attributes = {})
       super(service, attributes)
       @xml = DOCUMENT_XML
     end
-    
+
     #Retrieves an export of the Document.  The parameter +type+ must be one of the DOWNLOAD_TYPES.
     def get_content(type)
       if !@exists
@@ -81,12 +81,13 @@ module GDocs4Ruby
       ret = service.send_request(GData4Ruby::Request.new(:get, EXPORT_URI, nil, nil, {"docId" => @id,"exportFormat" => type}))
       ret.body
     end
-    
+    alias :content_as :get_content
+
     #Helper function limit queries to Documents.  See BaseObject#find for syntax.  Type is not required and assumed to be 'document'.
     def self.find(service, query, args = {})
       super(service, query, 'document', args)
     end
-    
+
     #Downloads the export retrieved through get_content to a specified local file.  Parameters are:
     #*type*:: must be a valid type enumerated in DOWNLOAD_TYPES
     #*location*:: a valid file location for the local system
