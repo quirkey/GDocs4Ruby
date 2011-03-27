@@ -71,14 +71,14 @@ module GDocs4Ruby
     end
 
     #Retrieves an export of the Document.  The parameter +type+ must be one of the DOWNLOAD_TYPES.
-    def get_content(type)
+    def get_content(type, options = {})
       if !@exists
         raise DocumentDoesntExist
       end
       if not DOWNLOAD_TYPES.include? type
         raise ArgumentError
       end
-      ret = service.send_request(GData4Ruby::Request.new(:get, EXPORT_URI, nil, nil, {"docId" => @id,"exportFormat" => type}))
+      ret = service.send_request(GData4Ruby::Request.new(:get, EXPORT_URI, nil, nil, {"docId" => @id,"exportFormat" => type}.merge(options)))
       ret.body
     end
     alias :content_as :get_content

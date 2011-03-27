@@ -64,6 +64,11 @@ FOLDER_LIST_FEED = "http://docs.google.com/feeds/documents/private/full/-/folder
     end
     alias :doc :document
 
+    # Spreadsheet
+    def spreadsheet(id)
+      GDocs4Ruby::Spreadsheet.find(self, {:id => id})
+    end
+
     #Returns an array of Folder objects for each folder associated with
     #the authenticated account.
     def folders
